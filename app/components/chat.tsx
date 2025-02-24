@@ -20,14 +20,43 @@ import {
   RiLeafLine,
 } from "@remixicon/react";
 import { ChatMessage } from "@/components/chat-message";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+
+type Message = {
+  content: string;
+  isUser: boolean;
+};
 
 export default function Chat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView();
-  }, []);
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleSubmit = () => {
+    if (!inputValue.trim()) return;
+
+    setMessages((prev) => [...prev, { content: inputValue, isUser: true }]);
+
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        { content: "This is a placeholder response. In a real implementation, this would be replaced with an actual AI response.", isUser: false },
+      ]);
+    }, 1000);
+
+    setInputValue("");
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
 
   return (
     <ScrollArea className="flex-1 [&>div>div]:h-full w-full shadow-md bg-background">
@@ -57,22 +86,11 @@ export default function Chat() {
         {/* Chat */}
         <div className="relative grow">
           <div className="max-w-3xl mx-auto mt-6 space-y-6">
-            <ChatMessage isUser>
-              <p>Hey Bolt, can you tell me more about AI Agents?</p>
-            </ChatMessage>
-            <ChatMessage>
-              <p>
-                AI agents are software that perceive their environment and act
-                autonomously to achieve goals, making decisions, learning, and
-                interacting. For example, an AI agent might schedule meetings by
-                resolving conflicts, contacting participants, and finding
-                optimal times—all without constant supervision.
-              </p>
-              <p>Let me know if you&lsquo;d like more details!</p>
-            </ChatMessage>
-            <ChatMessage isUser>
-              <p>All clear, thank you!</p>
-            </ChatMessage>
+            {messages.map((message, index) => (
+              <ChatMessage key={index} isUser={message.isUser}>
+                <p>{message.content}</p>
+              </ChatMessage>
+            ))}
             <div ref={messagesEndRef} aria-hidden="true" />
           </div>
         </div>
@@ -84,6 +102,9 @@ export default function Chat() {
                 className="flex sm:min-h-[84px] w-full bg-transparent px-4 py-3 text-[15px] leading-relaxed text-foreground placeholder:text-muted-foreground/70 focus-visible:outline-none [resize:none]"
                 placeholder="Ask me anything..."
                 aria-label="Enter your prompt"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={handleKeyPress}
               />
               {/* Textarea buttons */}
               <div className="flex items-center justify-between gap-2 p-3">
@@ -104,7 +125,13 @@ export default function Chat() {
                 </div>
                 {/* Right buttons */}
                 <div className="flex items-center gap-2">
-                  <Button className="rounded-full h-8">Send</Button>
+                  <Button 
+                    className="rounded-full h-8"
+                    onClick={handleSubmit}
+                    disabled={!inputValue.trim()}
+                  >
+                    Send
+                  </Button>
                 </div>
               </div>
             </div>

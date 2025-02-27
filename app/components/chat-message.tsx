@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import {
   RiShining2Line,
 } from "@remixicon/react";

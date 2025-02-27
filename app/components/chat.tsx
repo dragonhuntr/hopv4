@@ -3,21 +3,14 @@
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
-  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  RiCodeSSlashLine,
   RiShareLine,
-  RiShareCircleLine,
-  RiShining2Line,
   RiAttachment2,
-  RiMicLine,
-  RiLeafLine,
 } from "@remixicon/react";
 import { ChatMessage } from "@/components/chat-message";
 import { useRef, useEffect, useState } from "react";
